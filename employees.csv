@@ -1,0 +1,11 @@
+id,name,lastname,lastname2,email,charge,city,salary,age
+1,Juan,Pérez,Gómez,juan.perez@example.com,Developer,Bogotá,3500.00,28
+2,María,López,Martínez,maria.lopez@example.com,Designer,Medellín,3200.50,26
+3,Carlos,García,Rodríguez,carlos.garcia@example.com,Manager,Cali,4800.75,35
+4,Ana,Ramírez,,ana.ramirez@example.com,HR,Barranquilla,2900.00,30
+5,Luis,Torres,Santos,luis.torres@example.com,Developer,Bogotá,3600.00,27
+6,Sofía,Mendoza,Castro,sofia.mendoza@example.com,Analyst,Medellín,3100.00,24
+7,Diego,Vargas,Suárez,diego.vargas@example.com,Support,Cali,2700.00,29
+8,Paula,Fernández,,paula.fernandez@example.com,Developer,Bogotá,3550.00,31
+9,Javier,Ruiz,Ortega,javier.ruiz@example.com,Sales,Barranquilla,3400.00,33
+10,Carolina,Gómez,Lara,carolina.gomez@example.com,Marketing,Medellín,3300.00,28
