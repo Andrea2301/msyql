@@ -3,9 +3,13 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const db = require('./db');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 const { uploadCSVBack } = require('./helpers');
 
 const app = express();
+const upload = multer({ dest: 'uploads/' }); // Carpeta para archivos temporales
+
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -18,6 +22,26 @@ app.use((req, res, next) => {
 // =====================
 // RUTAS API
 // =====================
+
+app.post('/execute-csv', upload.single('csvFile'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No se recibió archivo CSV' });
+    }
+    console.log('Archivo CSV recibido:', req.file.path);
+
+    uploadCSVBack(req.file.path, (err, insertedCount) => {
+        // Borramos el archivo temporal luego de procesar
+        fs.unlink(req.file.path, (errUnlink) => {
+            if (errUnlink) console.error('Error borrando archivo temporal:', errUnlink);
+        });
+
+        if (err) {
+            console.error('Error en uploadCSVBack:', err);
+            return res.status(500).json({ message: "Error ejecutando CSV", error: err.message });
+        }
+        res.json({ message: "CSV ejecutado correctamente", inserted: insertedCount });
+    });
+});
 
 // GET - Listar todos
 app.get('/employees', (req, res) => {
@@ -61,14 +85,6 @@ app.delete('/employees/:id', (req, res) => {
         if (err) return res.status(500).json({ error: 'Database error' });
         if (result.affectedRows === 0) return res.status(404).json({ message: 'No encontrado' });
         res.json({ success: true });
-    });
-});
-
-// POST - Ejecutar CSV
-app.post('/execute-csv', (req, res) => {
-    uploadCSVBack((err, result) => {
-        if (err) return res.status(500).json({ message: "Error ejecutando CSV" });
-        res.json({ message: "CSV ejecutado correctamente", inserted: result });
     });
 });
 

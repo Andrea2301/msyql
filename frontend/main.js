@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const empId = document.getElementById("empId");
     const employeeModal = new bootstrap.Modal(document.getElementById("employeeModal"));
 
+    // Nuevo para CSV
+    const csvModal = new bootstrap.Modal(document.getElementById("csvModal"));
+    const butoncsv = document.getElementById("butoncsv");
+    const uploadForm = document.getElementById("uploadForm");
+    const uploadStatus = document.getElementById("uploadStatus");
+
     loadEmployees();
 
     function loadEmployees() {
@@ -81,5 +87,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
         }
+    });
+
+    // ==================== Funcionalidad CSV =====================
+    butoncsv.addEventListener("click", () => {
+        uploadStatus.textContent = "";
+        uploadForm.reset();
+        csvModal.show();
+    });
+
+    uploadForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('csvFile');
+
+        if (!fileInput.files.length) {
+            alert('Selecciona un archivo CSV');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('csvFile', fileInput.files[0]);
+
+        uploadStatus.style.color = 'black';
+        uploadStatus.textContent = 'Cargando...';
+
+        fetch('/execute-csv', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(res => res.json())
+        .then(data => {
+            uploadStatus.style.color = 'green';
+            uploadStatus.textContent = data.message || `Carga completada: ${data.inserted || 0} registros insertados`;
+            loadEmployees();
+            setTimeout(() => csvModal.hide(), 1500);
+        })
+        .catch(err => {
+            uploadStatus.style.color = 'red';
+            uploadStatus.textContent = 'Error en la carga: ' + err.message;
+        });
     });
 });
